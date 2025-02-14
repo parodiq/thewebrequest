@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Request Example</title>
+    <title>Puter.js API Demo</title>
+    <script src="https://js.puter.com/v2/"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,28 +24,27 @@
     </style>
 </head>
 <body>
-    <h1>API Request in Real Time</h1>
+    <h1>Puter.js API Demo</h1>
     <form onsubmit="event.preventDefault(); fetchData();">
-        <input type="text" id="apiUrl" placeholder="Enter API URL" required>
-        <button type="submit">Fetch Data</button>
+        <input type="text" id="userInput" placeholder="Enter your prompt" required>
+        <button type="submit">Generate</button>
     </form>
     <div id="output">Waiting for response...</div>
 
     <script>
         async function fetchData() {
             const output = document.getElementById("output");
-            const apiUrl = document.getElementById("apiUrl").value;
+            const userInput = document.getElementById("userInput").value;
             output.innerHTML = "Loading...";
 
-            if (!apiUrl) {
-                output.innerHTML = "Please enter a valid API URL";
+            if (!userInput) {
+                output.innerHTML = "Please enter a valid prompt";
                 return;
             }
 
             try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                output.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                const response = await puter.ai.chat(userInput);
+                output.innerHTML = `<pre>${response}</pre>`;
             } catch (error) {
                 output.innerHTML = "Error fetching data";
             }
