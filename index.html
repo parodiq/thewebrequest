@@ -85,22 +85,51 @@
     </form>
     
     <script>
+        // Load chat history from local storage when the page loads
+        window.onload = function() {
+            const chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+            chatHistory.forEach((message) => {
+                const chatBox = document.getElementById("chatBox");
+                const messageDiv = document.createElement("div");
+                messageDiv.className = `message ${message.sender}`;
+                messageDiv.textContent = message.text;
+                chatBox.appendChild(messageDiv);
+            });
+            const chatContainer = document.getElementById("chatContainer");
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        };
+
         async function fetchData() {
             const chatBox = document.getElementById("chatBox");
             const userInput = document.getElementById("userInput");
+            
+            // Display user message
             const userMessage = document.createElement("div");
             userMessage.className = "message user-message";
             userMessage.textContent = userInput.value;
             chatBox.appendChild(userMessage);
             chatBox.scrollTop = chatBox.scrollHeight;
 
+            // Store user message in chat history
+            let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+            chatHistory.push({ sender: 'user-message', text: userInput.value });
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+
             try {
+                // Get bot response
                 const response = await puter.ai.chat(userInput.value);
+                
+                // Display bot message
                 const botMessage = document.createElement("div");
                 botMessage.className = "message bot-message";
                 botMessage.textContent = response;
                 chatBox.appendChild(botMessage);
                 chatBox.scrollTop = chatBox.scrollHeight;
+
+                // Store bot message in chat history
+                chatHistory.push({ sender: 'bot-message', text: response });
+                localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+
             } catch (error) {
                 const errorMessage = document.createElement("div");
                 errorMessage.className = "message bot-message";
