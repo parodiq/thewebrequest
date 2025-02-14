@@ -14,12 +14,16 @@
             justify-content: center;
             height: 100vh;
         }
-        #output {
-            margin-top: 20px;
+        textarea {
+            width: 300px;
+            height: 150px;
+            margin-top: 10px;
             padding: 10px;
             border: 1px solid #ddd;
-            width: 300px;
-            text-align: center;
+            resize: none;
+        }
+        button {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -29,24 +33,24 @@
         <input type="text" id="userInput" placeholder="Enter your prompt" required>
         <button type="submit">Generate</button>
     </form>
-    <div id="output">Waiting for response...</div>
+    <textarea id="output" readonly>Waiting for response...</textarea>
 
     <script>
         async function fetchData() {
             const output = document.getElementById("output");
             const userInput = document.getElementById("userInput").value;
-            output.innerHTML = "Loading...";
+            output.value = "Loading...";
 
             if (!userInput) {
-                output.innerHTML = "Please enter a valid prompt";
+                output.value = "Please enter a valid prompt";
                 return;
             }
 
             try {
                 const response = await puter.ai.chat(userInput);
-                output.innerHTML = `<pre>${response}</pre>`;
+                output.value = response;
             } catch (error) {
-                output.innerHTML = "Error fetching data";
+                output.value = "Error fetching data";
             }
         }
     </script>
