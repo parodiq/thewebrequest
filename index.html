@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puter.js API Demo</title>
+    <title>Puter.js Chatbot</title>
     <script src="https://js.puter.com/v2/"></script>
     <style>
         body {
@@ -20,18 +20,37 @@
             font-size: 24px;
             margin-bottom: 20px;
         }
-        form {
+        .chat-container {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 10px;
+            width: 350px;
             background: #112240;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            max-height: 400px;
         }
-        input, textarea, button {
-            width: 320px;
+        .chat-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 80%;
+        }
+        .user-message {
+            background: #3f72af;
+            align-self: flex-end;
+        }
+        .bot-message {
+            background: #233554;
+            align-self: flex-start;
+        }
+        input, button {
+            width: 100%;
             padding: 10px;
             border-radius: 5px;
             border: none;
@@ -41,13 +60,7 @@
             background: #233554;
             color: #ffffff;
             border: 1px solid #3f72af;
-        }
-        textarea {
-            height: 150px;
-            background: #233554;
-            color: #ffffff;
-            border: 1px solid #3f72af;
-            resize: none;
+            margin-bottom: 10px;
         }
         button {
             background: #3f72af;
@@ -62,30 +75,39 @@
     </style>
 </head>
 <body>
-    <h1>Puter.js API Demo</h1>
+    <h1>Puter.js Chatbot</h1>
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-box" id="chatBox"></div>
+    </div>
     <form onsubmit="event.preventDefault(); fetchData();">
-        <input type="text" id="userInput" placeholder="Enter your prompt" required>
-        <button type="submit">Generate</button>
-        <textarea id="output" readonly>Waiting for response...</textarea>
+        <input type="text" id="userInput" placeholder="Type a message..." required>
+        <button type="submit">Send</button>
     </form>
     
     <script>
         async function fetchData() {
-            const output = document.getElementById("output");
-            const userInput = document.getElementById("userInput").value;
-            output.value = "Loading...";
-
-            if (!userInput) {
-                output.value = "Please enter a valid prompt";
-                return;
-            }
+            const chatBox = document.getElementById("chatBox");
+            const userInput = document.getElementById("userInput");
+            const userMessage = document.createElement("div");
+            userMessage.className = "message user-message";
+            userMessage.textContent = userInput.value;
+            chatBox.appendChild(userMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                const response = await puter.ai.chat(userInput);
-                output.value = response;
+                const response = await puter.ai.chat(userInput.value);
+                const botMessage = document.createElement("div");
+                botMessage.className = "message bot-message";
+                botMessage.textContent = response;
+                chatBox.appendChild(botMessage);
+                chatBox.scrollTop = chatBox.scrollHeight;
             } catch (error) {
-                output.value = "Error fetching data";
+                const errorMessage = document.createElement("div");
+                errorMessage.className = "message bot-message";
+                errorMessage.textContent = "Error fetching response";
+                chatBox.appendChild(errorMessage);
             }
+            userInput.value = "";
         }
     </script>
 </body>
